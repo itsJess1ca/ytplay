@@ -1,0 +1,116 @@
+@import '../../variables';
+
+:host {
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: #303030;
+  color: map_get($colors, primary);
+  width: 80%;
+  margin: 25px auto 12.5px;
+  border-radius: 2px;
+  height: 75px;
+  min-height: 75px;
+  @include card(1);
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+#songTracker {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column nowrap;
+}
+
+#songTracker__header {
+  font-size: 1.2em;
+  font-variant: all-small-caps;
+  margin: 0;
+}
+
+#songTracker__valueContainer {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+#songTracker__currentIndex {
+  font-size: 2.2em;
+  margin: 0;
+}
+
+#songTracker__playlistLength {
+  align-self: flex-end;
+  font-size: 1.4em;
+  margin: 0;
+}
+
+#input {
+  display: flex;
+  flex: 3;
+  justify-content: center;
+  align-items: center;
+}
+
+#input__field-container {
+  color: map_get($colors, primary);
+  width: calc(80% - 20px);
+}
+
+#input__field-container /deep/ .md-input-placeholder {
+  color: map_get($colors, primary);
+}
+
+#input__field-container /deep/ .md-input-placeholder.md-focused {
+  color: map_get($colors, accent);
+}
+
+#input__field-container /deep/ .md-input-underline {
+  border-color: map_get($colors, primary);
+}
+
+#input__checkbox {
+  width: 20%;
+  margin-left: 20px;
+}
+
+#input__checkbox /deep/ .md-checkbox-layout {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+
+#input__checkbox /deep/ .md-checkbox-label {
+  line-height: 1em;
+}
+
+#input__checkbox /deep/ .md-checkbox-label {
+  font-size: 0.8em;
+}
+
+#actions {
+  display: flex;
+  flex: 2;
+  justify-content: center;
+  align-items: center;
+}
+
+#volumeSlider.disabled /deep/ .md-slider-thumb {
+  background-color: #5e5e5e;
+}
+#volumeSlider /deep/ .md-slider-track-fill {
+  background-color: lighten(map_get($colors, accent), 15);
+}
+#volumeSlider.disabled /deep/ .md-slider-track-fill {
+  background-color: map_get($colors, disabled);
+}
+
+#progressBar {
+  position: absolute;
+  margin: 0 auto;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+}
+

@@ -1,0 +1,27 @@
+<div id="wrapper">
+  <my-player-controls
+    [currentIndex]="currentIndex"
+    [playlist]="playlist"
+    [duration]="duration"
+    (addToExistingPlaylist)="toggleAddToExistingPlaylist()"
+    (search)="fetchPlaylist($event)"
+    (shuffleChange)="shuffle()"
+    (loopModeChange)="onLoopModeChange()"
+    (play)="play($event)"
+    (showPlayer)="togglePlayer()"
+    (volume)="volumeChange($event)"
+  ></my-player-controls>
+  <my-youtube-player
+    [@playerVisible__player]="playlist.playerVisible"
+    [videoId]="playlist.songs.length > 0 ? playlist.songs[playlist.activeIndex].videoId : null"
+    [volume]="playlist.volume"
+    (duration)="duration = $event"
+    (playerState)="updatePlayerState($event)"
+  ></my-youtube-player>
+  <my-youtube-playlist
+    [@playerVisible__playlist]="playlist.playerVisible"
+    [activeVideo]="currentVideoId"
+    [playlist]="playlist"
+  >
+  </my-youtube-playlist>
+</div>

@@ -1,0 +1,16 @@
+@import '../../variables';
+:host {
+  display: block;
+  overflow: hidden;
+  margin: 0 auto;
+  width: 80%;
+}
+#playerContainer {
+  width: 854px;
+  height: 480px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @include card(1);
+}

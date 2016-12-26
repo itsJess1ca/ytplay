@@ -1,0 +1,39 @@
+@import '../../variables';
+:host {
+  display: block;
+  width: 80%;
+  background-color: #303030;
+  margin: 12.5px auto 25px;
+  border-radius: 2px;
+  @include card(1);
+  transform: inherit;
+}
+#playlist {
+  width: 100%;
+  margin: 0 auto;
+  color: white;
+}
+.song, .song a {
+  color: map_get($colors, primary);
+}
+.song {
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid rgba(0,0,0,0.16);
+}
+.song .spinner {
+  position: absolute;
+  height: 100%;
+  left: 20px;
+  top: 20px;
+}
+.song .accent {
+  position: absolute;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background-color: transparent;
+}
+.song .accent.active {
+  background-color: map_get($colors, primary);
+}

@@ -1,0 +1,13 @@
+<md-list id="playlist">
+  <md-list-item class="song" *ngIf="playlist.length === 0">
+    <h3 md-line>No Songs in playlist yet...</h3>
+  </md-list-item>
+  <md-list-item class="song" *ngFor="let song of playlist.songs; trackBy: trackByFn ">
+    <div class="accent" [ngClass]="{active: song.active}"></div>
+    <div class="spinner" *ngIf="!song.title">Loading Song Data</div>
+    <h3 md-line>{{song.title}}</h3>
+    <p md-line>
+      <span><a href="{{song.channelLink}}">{{song.channel}}</a></span>
+    </p>
+  </md-list-item>
+</md-list>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Angular 2 App</title>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <base href="/">
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="main.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>#str-dlls {
+    display: none
+  }</style>
+</head>
+<body>
+<my-app>
+  Loading...
+</my-app>
+<script type="text/javascript" src="hammer.min.js"></script>
+<script type="text/javascript" src="modernizer-touch-events.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=console.*,Intl.~locale.en&gated=1"></script>
+<% if (htmlWebpackPlugin.options.metadata.isDevServer) { %>
+<!-- DLL files -->
+<script src="/polyfill.dll.js"></script>
+<script src="/vendor.dll.js"></script>
+<script>
+  // The client ID is obtained from the {{ Google Cloud Console }}
+  // at {{ https://cloud.google.com/console }}.
+  // If you run this code from a server other than http://localhost,
+  // you need to register your own client ID.
+  const OAUTH2_CLIENT_ID = '985710164445-1ev3rgplijorsnff1u7ae8m32737i3jq.apps.googleusercontent.com';
+  const OAUTH2_SCOPES = [
+    'https://www.googleapis.com/auth/youtube'
+  ];
+  // Upon loading, the Google APIs JS client automatically invokes this callback.
+  googleApiClientReady = function () {
+    gapi.auth.init(function () {
+      window.setTimeout(checkAuth, 1);
+    });
+  };
+
+  // Attempt the immediate OAuth 2.0 client flow as soon as the page loads.
+  // If the currently logged-in Google Account has previously authorized
+  // the client specified as the OAUTH2_CLIENT_ID, then the authorization
+  // succeeds with no user intervention. Otherwise, it fails and the
+  // user interface that prompts for authorization needs to display.
+  function checkAuth() {
+    gapi.auth.authorize({
+      client_id: OAUTH2_CLIENT_ID,
+      scope: OAUTH2_SCOPES,
+      immediate: true
+    }, handleAuthResult);
+  }
+
+  // Handle the result of a gapi.auth.authorize() call.
+  function handleAuthResult(authResult) {
+    if (!authResult.error) {
+      youtubeAuth = authResult;
+      loadAPIClientInterfaces();
+    } else {
+      console.log('checking');
+      document.onclick = function() {
+        document.onclick = null;
+        gapi.auth.authorize({
+          client_id: OAUTH2_CLIENT_ID,
+          scope: OAUTH2_SCOPES,
+          immediate: false
+        }, handleAuthResult);
+      }
+    }
+  }
+
+  // Load the client interfaces for the YouTube Analytics and Data APIs, which
+  // are required to use the Google APIs JS client. More info is available at
+  // https://developers.google.com/api-client-library/javascript/dev/dev_jscript#loading-the-client-library-and-the-api
+  function loadAPIClientInterfaces() {
+    gapi.client.load('youtube', 'v3', function () {
+      youtubeClientLoaded = true;
+    });
+  }
+
+  function onYouTubeIframeAPIReady() {
+    YoutubeIframeAPIReady = true;
+  }
+
+</script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
+<% } %>
+</body>
+</html>

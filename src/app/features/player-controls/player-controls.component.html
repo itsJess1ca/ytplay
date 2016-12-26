@@ -1,0 +1,104 @@
+<section id="songTracker">
+  <h1 id="songTracker__header">Current Song</h1>
+  <div id="songTracker__valueContainer">
+    <h3 id="songTracker__currentIndex">{{playlist.activeIndex === -1 ? 0 : playlist.activeIndex + 1}}</h3><h4 id="songTracker__playlistLength">/{{playlist.length}}</h4>
+  </div>
+</section>
+<section id="input">
+
+  <md-input-container id="input__field-container">
+    <input
+      md-input
+      type="text"
+      id="input__field"
+      (blur)="search.emit(inputField.value)"
+      (keydown)="onEnter($event)"
+      #inputField
+      placeholder="Youtube Playlist ID..."
+    >
+  </md-input-container>
+
+  <md-checkbox
+    id="input__checkbox"
+    (change)="addToExistingPlaylist.emit($event)"
+    [disabled]="playlist.length === 0"
+  >Add to existing playlist?</md-checkbox>
+</section>
+<section id="actions">
+  <button
+    md-icon-button
+    (click)="openDialog()"
+    mdTooltip="Clear playlist"
+    mdTooltipPosition="below"
+  ><md-icon>close</md-icon></button>
+  <button
+    md-icon-button
+    (click)="showPlayer.emit()"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Toggle Player"
+    mdTooltipPosition="below"
+  ><md-icon>video_label</md-icon></button>
+
+  <span><md-icon></md-icon></span>
+
+  <button
+    md-icon-button
+    (click)="0"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Previous track"
+    mdTooltipPosition="below"
+  ><md-icon>skip_previous</md-icon></button>
+
+  <button
+    md-icon-button
+    (click)="play.emit(playerStateTooltip === 'Play')"
+    [disabled]="playlist.length === 0"
+    [mdTooltip]="playerStateTooltip"
+    mdTooltipPosition="below"
+  ><md-icon>{{playerStateTooltip === 'Play' ? 'play_arrow' : 'pause'}}</md-icon></button>
+
+  <button
+    md-icon-button
+    (click)="0"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Next track"
+    mdTooltipPosition="below"
+  ><md-icon>skip_next</md-icon></button>
+
+  <button
+    md-icon-button
+    [ngClass]="{'md-accent': playlist.shuffled}"
+    (click)="shuffle()"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Shuffle playlist"
+    mdTooltipPosition="below"
+  ><md-icon>shuffle</md-icon></button>
+
+  <button
+    md-icon-button
+    id="loopModeButton"
+    [ngClass]="{'md-accent': loopMode === 'all' || loopMode === 'one'}"
+    (click)="toggleLoopMode()"
+    [disabled]="playlist.length === 0"
+    mdTooltip="{{loopMode === 'all' ? 'Repeat all' : loopMode === 'one' ? 'Repeat one' : 'No Repeat'}}"
+    mdTooltipPosition="below"
+  ><md-icon>{{loopModeIcon}}</md-icon></button>
+
+  <button
+    md-icon-button
+    id="muteButton"
+    [disabled]="playlist.length === 0"
+    [ngClass]="{'md-accent': playlist.volume === 0 && _unmutedVol}"
+    [mdTooltip]="playlist.volume === 0 ? 'Unmute' : 'Mute'"
+    (click)="playlist.volume === 0 ? volumeUpdate('unmute') : volumeUpdate('mute')"
+  ><md-icon>{{playlist.volume > 80 ? 'volume_up' : playlist.volume > 40 ? 'volume_down' : playlist.volume > 0 ? 'volume_mute' : 'volume_off'}}</md-icon></button>
+
+  <md-slider
+    id="volumeSlider"
+    [ngClass]="{disabled: playlist.length === 0}"
+    [disabled]="playlist.length === 0"
+    (change)="volumeUpdate($event)"
+    [value]="playlist.volume"
+  ></md-slider>
+</section>
+<md-progress-bar id="progressBar" mode="determinate" value="100"></md-progress-bar>
