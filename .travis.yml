@@ -28,8 +28,9 @@ before_install:
  - sudo dpkg -i google-chrome*.deb
 install:
  - npm install
-script: npm run ci
-after_script: npm run compile:aot
+script:
+- npm run ci
+- npm run compile:aot
 deploy:
   provider: s3
   access_key_id: "$AWS_ACCESS_KEY"
