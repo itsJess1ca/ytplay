@@ -96,7 +96,7 @@ export class PlayerControlsComponent {
     this.shuffleChange.emit();
   }
   volumeUpdate(volume: MdSliderChange | number | 'unmute' | 'mute') {
-    switch(volume.constructor) {
+    switch (volume.constructor) {
       case String:
         if (volume === 'unmute') {
           this.volume.emit(this._unmutedVol);
@@ -109,6 +109,9 @@ export class PlayerControlsComponent {
       case MdSliderChange:
         let v = <MdSliderChange>volume;
         this.volume.emit(v.value);
+        break;
+      default:
+        break;
     }
   }
 }
