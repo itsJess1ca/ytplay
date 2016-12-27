@@ -1,9 +1,6 @@
 import {
-  Component, OnInit, ViewChild, NgZone, Input, Output, EventEmitter, Renderer,
-  HostBinding, AfterViewInit
+  Component, OnInit, Input, Output, EventEmitter, AfterViewInit
 } from '@angular/core';
-import { AppState } from '../../reducers/index';
-import { Store } from '@ngrx/store';
 import { PlaylistState } from '../../reducers/playlist/playlist.reducer';
 
 @Component({
@@ -18,20 +15,15 @@ export class YoutubePlayerComponent implements OnInit, AfterViewInit {
   _videoId: VideoID;
   _volume: number;
 
+  @Input() playlist: PlaylistState;
   @Input() set videoId(id: VideoID) {
-    if (!this.player && this.apiReady) {
-      this.createPlayer(id);
-      return;
-    }
+    console.log('new video id', id);
     if (id !== this._videoId) {
       this._videoId = id;
-      if (this.player) {
-        this.loadVideo(id);
-        return;
-      }
+      this.loadVideo(id);
     }
   }
-  @Input() autoplay: boolean = false;
+
   @Input() set volume(vol: number) {
     this._volume = vol;
     if (this.player) {
@@ -52,8 +44,8 @@ export class YoutubePlayerComponent implements OnInit, AfterViewInit {
   get apiReady() {
     return this._apiReady;
   }
+
   set apiReady(val: boolean) {
-    console.log(`youtube api status: ${val}`);
     this._apiReady = val;
     if (val && this._videoId) {
       this.createPlayer(this._videoId);
@@ -71,7 +63,6 @@ export class YoutubePlayerComponent implements OnInit, AfterViewInit {
   }
 
   createPlayer(videoID: string) {
-    console.log('Create player');
     if (this.apiReady) {
       this.player = new YT.Player('player', {
         playerVars: {
@@ -89,29 +80,50 @@ export class YoutubePlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  destroyPlayer() {
+    console.log('destroy player');
+    if (this.player) {
+      this.player.destroy();
+      this.player = null;
+    }
+  }
+
   playerReady() {
     console.log('Player ready');
-    this.playerState.emit(5);
-    this.player.setVolume(this._volume);
-    this.duration.emit(this.player.getDuration());
+    if (this.player) {
+      this.playerState.emit(5);
+      this.player.setVolume(this._volume);
+      this.duration.emit(this.player.getDuration());
+    }
   }
 
   playerStateChange(state: {data: PlayerState, target: any}) {
     this.playerState.emit(state.data);
+    if (
+      this.playlist.loopMode !== 'off' && state.data === 0 && this.playlist.length === 1 // Repeat mode set to all one a playlist length of 1
+      || this.playlist.loopMode === 'one' && state.data === 0 // Repeat mode set to one
+    ) {
+      console.log('seekTo');
+      this.player.seekTo(0, false);
+      this.play();
+    }
   }
 
   play() {
     this.player.playVideo();
   }
+
   pause() {
     this.player.pauseVideo();
   }
 
   loadVideo(id: VideoID) {
-    if (this.autoplay) {
+    console.log(`Setting video id to ${id}`);
+    if (!this.player && this.apiReady && id) {
+      this.createPlayer(id);
+      return;
+    } else if (this.player && id) {
       this.player.loadVideoById(id);
-    } else {
-      this.player.cueVideoById(id);
     }
   }
 

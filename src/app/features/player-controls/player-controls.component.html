@@ -11,7 +11,6 @@
       md-input
       type="text"
       id="input__field"
-      (blur)="search.emit(inputField.value)"
       (keydown)="onEnter($event)"
       #inputField
       placeholder="Youtube Playlist ID..."
@@ -20,30 +19,18 @@
 
   <md-checkbox
     id="input__checkbox"
+    [checked]="playlist.appendEntries"
     (change)="addToExistingPlaylist.emit($event)"
     [disabled]="playlist.length === 0"
-  >Add to existing playlist?</md-checkbox>
+    mdTooltip="Add to existing playlist?"
+    mdTooltipPosition="below"
+  ></md-checkbox>
 </section>
 <section id="actions">
-  <button
-    md-icon-button
-    (click)="openDialog()"
-    mdTooltip="Clear playlist"
-    mdTooltipPosition="below"
-  ><md-icon>close</md-icon></button>
-  <button
-    md-icon-button
-    (click)="showPlayer.emit()"
-    [disabled]="playlist.length === 0"
-    mdTooltip="Toggle Player"
-    mdTooltipPosition="below"
-  ><md-icon>video_label</md-icon></button>
-
-  <span><md-icon></md-icon></span>
 
   <button
     md-icon-button
-    (click)="0"
+    (click)="previousTrack.emit()"
     [disabled]="playlist.length === 0"
     mdTooltip="Previous track"
     mdTooltipPosition="below"
@@ -59,7 +46,7 @@
 
   <button
     md-icon-button
-    (click)="0"
+    (click)="nextTrack.emit()"
     [disabled]="playlist.length === 0"
     mdTooltip="Next track"
     mdTooltipPosition="below"
@@ -100,5 +87,24 @@
     (change)="volumeUpdate($event)"
     [value]="playlist.volume"
   ></md-slider>
+
+  <span><md-icon></md-icon></span>
+
+  <button
+    md-icon-button
+    (click)="showPlayer.emit()"
+    [ngClass]="{'md-accent': playlist.playerVisible === 'visible'}"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Toggle Player"
+    mdTooltipPosition="below"
+  ><md-icon>video_label</md-icon></button>
+
+  <button
+    md-icon-button
+    (click)="openDialog()"
+    [disabled]="playlist.length === 0"
+    mdTooltip="Clear playlist"
+    mdTooltipPosition="below"
+  ><md-icon>delete</md-icon></button>
 </section>
 <md-progress-bar id="progressBar" mode="determinate" value="100"></md-progress-bar>

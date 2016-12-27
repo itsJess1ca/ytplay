@@ -63,6 +63,10 @@ export function playlistReducer(state = initialState, action: Action): PlaylistS
       });
     }
 
+    case PlaylistActions.CLEAR_PLAYLIST: {
+      return Object.assign({}, state, {songs: [], activeIndex: -1, length: 0, unshuffledSongs: null});
+    }
+
     case PlaylistActions.TOGGLE_PLAYER: {
       return Object.assign({}, state, {playerVisible: state.playerVisible === 'visible' ? 'notVisible' : 'visible'});
     }
@@ -98,9 +102,13 @@ export function playlistReducer(state = initialState, action: Action): PlaylistS
     }
 
     case PlaylistActions.PLAYER_STATE: {
-      return Object.assign({}, state, {
-        playerState: action.payload
-      });
+      if (action.payload === 0) {
+        return Object.assign(nextTrack(state, 'next'), {
+          playerState: action.payload
+        });
+      } else {
+        return Object.assign({}, state, {playerState: action.payload});
+      }
     }
 
     case PlaylistActions.CHANGE_VOLUME: {
@@ -109,9 +117,51 @@ export function playlistReducer(state = initialState, action: Action): PlaylistS
       });
     }
 
+    case PlaylistActions.NEXT_SONG: {
+      return nextTrack(state, 'next', true);
+    }
+    case PlaylistActions.PREVIOUS_SONG: {
+      return nextTrack(state, 'prev', true);
+    }
+
     default: {
       return state;
     }
   }
+}
+
+export function nextTrack(state: PlaylistState, direction: 'next' | 'prev' = 'next', force: boolean = false): PlaylistState {
+  let newIndex;
+
+  if (direction === 'next') {
+    if (state.loopMode === 'one' && !force) {
+      newIndex = state.activeIndex;
+    } else if (state.loopMode === 'all' && state.activeIndex === state.length - 1) {
+      newIndex = 0;
+    } else if (state.activeIndex + 1 !== state.length) {
+      newIndex = state.activeIndex + 1;
+    } else {
+      newIndex = state.activeIndex;
+    }
+  } else if (direction === 'prev') {
+    if (state.loopMode === 'one' && !force) {
+      newIndex = state.activeIndex;
+    } else if (state.loopMode === 'all' && state.activeIndex - 1 === -1) {
+      newIndex = state.length - 1;
+    } else if (state.activeIndex - 1 !== -1) {
+      newIndex = state.activeIndex - 1;
+    } else {
+      newIndex = state.activeIndex;
+    }
+  }
+  let songs;
+  if (newIndex !== state.activeIndex) {
+    songs = state.songs.map((song, index) => {
+      return Object.assign({}, song, {active: index === newIndex});
+    });
+  } else {
+    songs = [...state.songs];
+  }
+  return Object.assign({}, state, {songs: songs, activeIndex: newIndex});
 }
 

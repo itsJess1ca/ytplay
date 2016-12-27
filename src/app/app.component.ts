@@ -46,14 +46,22 @@ export class AppComponent implements OnInit {
   duration: number;
   playlist: PlaylistState;
 
-  constructor(
-    private store: Store<AppState>,
-    private playlistActions: PlaylistActions,
-    public yt: YoutubeService
-  ) { }
+  constructor(private store: Store<AppState>,
+              private playlistActions: PlaylistActions,
+              public yt: YoutubeService) { }
 
   ngOnInit() {
-    this.store.select('playlist').subscribe((playlist: PlaylistState) => this.playlist = playlist);
+    this.store.select('playlist').subscribe((playlist: PlaylistState) => {
+      this.playlist = playlist;
+      if (this.playlist.length === 0 && this.player.player) {
+        console.log('destroy player');
+        this.player.destroyPlayer();
+      }
+      if (this.playlist.playerVisible === 'visible' && this.playlist.length === 0) {
+        console.log('toggle player visibility');
+        this.store.dispatch(this.playlistActions.togglePlayer());
+      }
+    });
   }
 
   fetchPlaylist(playlistId: string) {
@@ -63,8 +71,7 @@ export class AppComponent implements OnInit {
       } else {
         this.currentIds = [playlistId];
       }
-      this.yt
-        .getPlaylist(playlistId)
+      this.yt.handleQuery(playlistId)
         .then(playlist => {
           this.store.dispatch(this.playlistActions.addSongs(playlist));
         })
@@ -87,6 +94,7 @@ export class AppComponent implements OnInit {
   toggleAddToExistingPlaylist() {
     this.store.dispatch(this.playlistActions.appendEntriesToggle());
   }
+
   shuffle() {
     this.store.dispatch(this.playlistActions.shuffle());
   }
@@ -94,7 +102,20 @@ export class AppComponent implements OnInit {
   updatePlayerState(state: PlayerState) {
     this.store.dispatch(this.playlistActions.playerState(state));
   }
+
   volumeChange(volume: number) {
     this.store.dispatch(this.playlistActions.changeVolume(volume));
+  }
+
+  previousTrack() {
+    this.store.dispatch(this.playlistActions.previousSong());
+  }
+
+  nextTrack() {
+    this.store.dispatch(this.playlistActions.nextSong());
+  }
+
+  clearPlaylist() {
+    this.store.dispatch(this.playlistActions.clearPlaylist());
   }
 }

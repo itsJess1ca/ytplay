@@ -25,10 +25,24 @@ export class PlaylistActions {
     };
   }
 
+  static CLEAR_PLAYLIST = '[Playlist] Clear playlist';
+  clearPlaylist(): Action {
+    return {
+      type: PlaylistActions.CLEAR_PLAYLIST
+    };
+  }
+
   static NEXT_SONG = '[Playlist] Next Song';
   nextSong(): Action {
     return {
       type: PlaylistActions.NEXT_SONG
+    };
+  }
+
+  static PREVIOUS_SONG = '[Playlist] Previous Song';
+  previousSong(): Action {
+    return {
+      type: PlaylistActions.PREVIOUS_SONG
     };
   }
 

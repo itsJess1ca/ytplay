@@ -9,7 +9,6 @@ import { Song } from '../../reducers/playlist/playlist.model';
 })
 export class YoutubePlaylistComponent implements OnInit {
   @Input() playlist: PlaylistState;
-  @Input() activeVideo: VideoID;
 
   constructor() {
   }

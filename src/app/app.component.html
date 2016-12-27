@@ -10,6 +10,9 @@
     (play)="play($event)"
     (showPlayer)="togglePlayer()"
     (volume)="volumeChange($event)"
+    (previousTrack)="previousTrack()"
+    (nextTrack)="nextTrack()"
+    (clearPlaylist)="clearPlaylist()"
   ></my-player-controls>
   <my-youtube-player
     [@playerVisible__player]="playlist.playerVisible"
@@ -17,10 +20,10 @@
     [volume]="playlist.volume"
     (duration)="duration = $event"
     (playerState)="updatePlayerState($event)"
+    [playlist]="playlist"
   ></my-youtube-player>
   <my-youtube-playlist
     [@playerVisible__playlist]="playlist.playerVisible"
-    [activeVideo]="currentVideoId"
     [playlist]="playlist"
   >
   </my-youtube-playlist>

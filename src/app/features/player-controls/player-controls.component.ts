@@ -33,9 +33,12 @@ export class PlayerControlsComponent {
   @Output() loopModeChange = <EventEmitter<LoopMode>>new EventEmitter();
 
   // Core
+  @Output() nextTrack: EventEmitter<any> = new EventEmitter();
+  @Output() previousTrack: EventEmitter<any> = new EventEmitter();
   @Output() search = <EventEmitter<string>>new EventEmitter();
   @Output() play = <EventEmitter<boolean>>new EventEmitter();
   @Output() volume = <EventEmitter<number>>new EventEmitter();
+  @Output() clearPlaylist: EventEmitter<any> = new EventEmitter();
 
   _unmutedVol: number;
 
@@ -61,7 +64,9 @@ export class PlayerControlsComponent {
     this.dialogRef.componentInstance.data = {title: 'Are you sure you want to clear your playlist?'};
 
     this.dialogRef.afterClosed().subscribe(result => {
-      console.log('result: ' + result);
+      if (result) {
+        this.clearPlaylist.emit();
+      }
     });
   }
 
@@ -109,6 +114,7 @@ export class PlayerControlsComponent {
       case MdSliderChange:
         let v = <MdSliderChange>volume;
         this.volume.emit(v.value);
+        if (this._unmutedVol) this._unmutedVol = null;
         break;
       default:
         break;
