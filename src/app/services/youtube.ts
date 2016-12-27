@@ -47,6 +47,23 @@ export class YoutubeService {
     this.token = this.window.youtubeAuth.access_token;
   }
 
+  handleQuery(query: string): Promise<Song[]> {
+    return new Promise((resolve, reject) => {
+
+      if (this.window.youtubeClientLoaded) {
+        this.getVideo(query)
+          .catch((err) => {
+            console.log(err);
+            return this.getPlaylist(query);
+          })
+          .then(resolve);
+      }
+
+    });
+
+
+  }
+
   getPlaylist(playlistID: string): Promise<Song[]> {
     return new Promise((resolve, reject) => {
       // get playlistItems from gapi
@@ -85,41 +102,38 @@ export class YoutubeService {
         });
       }
 
-      function getVideoDetails(video: GapiPlaylistItem): Promise<Song> {
-        return new Promise((innerResolve, innerReject) => {
-          const data: Song = {
-            title: video.snippet.title,
-            channel: '',
-            videoId: video.snippet.resourceId.videoId,
-            channelLink: '',
-            active: false
-          };
-          const request = gapi.client.youtube.videos.list({
-            id: video.snippet.resourceId.videoId,
-            part: 'contentDetails, snippet'
-          });
-          request.execute((response: GapiResponse<GapiVideoItem>) => {
-            if (response.items) {
-              const videoDetails = response.items[0];
-              data.channel = videoDetails.snippet.channelTitle;
-              data.channelLink = `http://www.youtube.com/channel/${videoDetails.snippet.channelId}`;
-              innerResolve(data);
-            } else {
-              innerReject(response);
-            }
-          });
-        });
-      }
 
       if (this.window.youtubeClientLoaded) {
         getPlaylistItems()
           .then((response) => {
             Promise
-              .all(response.map(video => getVideoDetails(video)))
+              .all(response.map(video => this.getVideo(video.snippet.resourceId.videoId)))
               .then(resolve);
           })
           .catch(reject);
       }
+    });
+  }
+
+  getVideo(videoID: string, returnArray?: boolean): Promise<Song[]> {
+    return new Promise((resolve, reject) => {
+      const request = gapi.client.youtube.videos.list({
+        part: 'snippet',
+        id: videoID
+      });
+      request.execute((response) => {
+        if (response.items.length === 0) reject('No video found');
+        const responseItems = response.items.map((video) => {
+          return {
+            title: video.snippet.title,
+            channel: video.snippet.channelTitle,
+            videoId: video.id,
+            channelLink: `http://www.youtube.com/channel/${video.snippet.channelId}`,
+            active: false
+          };
+        });
+        resolve(returnArray ? responseItems : responseItems[0]);
+      });
     });
   }
 }
