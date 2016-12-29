@@ -282,10 +282,7 @@ const clientConfig = function webpackConfig(): WebpackConfig {
   };
 
   config.resolve = {
-    extensions: ['.ts', '.js', '.json'],
-    alias: {
-      '@angular/material': '@angular/material/bundles/material.umd.js',
-    },
+    extensions: ['.ts', '.js', '.json']
   };
 
   return config;
